@@ -2,6 +2,31 @@ import os
 import json
 import psycopg2
 from kafka import KafkaConsumer
+from dotenv import load_dotenv
+from kafka.errors import NoBrokersAvailable
+import time
+
+load_dotenv()
+boot = os.getenv('KAFKA_BOOTSTRAP_SERVERS')
+
+
+def create_consumer(bootstrap_servers, topic, retries=5):
+    for attempt in range(retries):
+        try:
+            consumer = KafkaConsumer(
+                topic,
+                bootstrap_servers=bootstrap_servers,
+                auto_offset_reset='earliest',
+                enable_auto_commit=False,
+                value_deserializer=lambda x: json.loads(x.decode('utf-8'))
+            )
+            return consumer
+        except NoBrokersAvailable:
+            print(f"No brokers available, retrying in 5 seconds (attempt {attempt + 1})")
+            time.sleep(5)
+    raise Exception("Kafka broker is not available after retries")
+
+
 
 def connect_to_db():
     host = os.environ.get('POSTGRES_HOST', 'postgres')
@@ -49,16 +74,10 @@ def insert_event(conn, event):
     print(f"Event inserted: {event}")
 
 def main():
-    bootstrap_servers = os.environ.get('KAFKA_BOOTSTRAP_SERVERS', 'localhost:9092')
+    bootstrap_servers = os.environ.get('KAFKA_BOOTSTRAP_SERVERS', boot)
     topic = os.environ.get('KAFKA_TOPIC', 'subscriptions')
 
-    consumer = KafkaConsumer(
-        topic,
-        bootstrap_servers=bootstrap_servers,
-        auto_offset_reset='earliest',
-        enable_auto_commit=False,
-        value_deserializer=lambda x: json.loads(x.decode('utf-8'))
-    )
+    consumer = create_consumer(bootstrap_servers, topic)
 
     conn = connect_to_db()
     create_table_if_not_exists(conn)

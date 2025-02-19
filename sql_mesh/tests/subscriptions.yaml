@@ -1,0 +1,15 @@
+subscriptions:
+  model: pipe_demo.subscriptions
+  inputs:
+    sqlmesh_example.incremental_model:
+      rows:
+      - user_id: "30f051a5-6cb7-4223-a9b3-865dc7dac5c2"
+        event_time: "2025-02-19T21:12:47.962045"
+        subscription_amount: 16.11
+        event_type: "new_subscription"
+  outputs:
+    query:
+      rows:
+      - user_id: "30f051a5-6cb7-4223-a9b3-865dc7dac5c2"
+        total_subscriptions: 1
+        total_revenue: 16.11

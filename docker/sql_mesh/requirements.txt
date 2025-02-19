@@ -1,2 +1,2 @@
-sqlmesh==0.158.2
+sqlmesh[web]
 psycopg2-binary==2.9.10

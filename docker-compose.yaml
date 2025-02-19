@@ -84,12 +84,14 @@ services:
       dockerfile: docker/sql_mesh/Dockerfile
     container_name: sqlmesh
     volumes:
-      - ./transformations:/transformations
+      - ./sql_mesh:/app
     env_file:
       - .env
     depends_on:
       - postgres
-    command: sqlmesh run --target postgres
+    # command: sqlmesh -p /app run --target postgres
+    ports:
+      - "8000:8000"
 
   superset:
     build:
@@ -102,7 +104,7 @@ services:
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB_SUPERSET=${POSTGRES_DB_SUPERSET}
+      - POSTGRES_DB_SUPERSET=${POSTGRES_DB}
       - SUPERSET=${SUPERSET}
       - SUPERSET_CONFIG_PATH=/etc/superset/superset_config.py
     volumes:

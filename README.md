@@ -36,3 +36,9 @@ This repository demonstrates a **streaming and batch data pipeline** inspired by
 ```bash
 git clone repo
 cd root
+```
+
+### 2. CMDs
+```bash
+docker compose run --rm sqlmesh sqlmesh plan
+```
