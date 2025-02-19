@@ -1,0 +1,9 @@
+{
+  "topics": [
+    {
+      "name": "subscriptions",
+      "partitions": 1,
+      "replication_factor": 1
+    }
+  ]
+}

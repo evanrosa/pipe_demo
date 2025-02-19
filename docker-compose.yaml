@@ -1,0 +1,120 @@
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper:latest
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: wurstmeister/kafka:latest
+    ports:
+      - "9092:9092"
+    expose:
+      - "9093"
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9093
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9093
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  kafka_producer:
+    build:
+      context: .
+      dockerfile: docker/kafka/producer/Dockerfile
+    container_name: kafka_producer
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9093
+    volumes:
+      - ./kafka/scripts:/kafka/scripts
+    depends_on:
+      - kafka
+    env_file:
+      - .env
+    command: python /kafka/scripts/producer.py
+
+  kafka_consumer:
+    build:
+      context: .
+      dockerfile: docker/kafka/consumer/Dockerfile
+    container_name: kafka_consumer
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9093
+    volumes:
+      - ./kafka/scripts:/app/kafka/scripts
+    env_file:
+      - .env
+    command: python /app/kafka/scripts/consumer.py
+    depends_on:
+      - kafka
+      - postgres
+
+  topic_creator:
+    build:
+      context: .
+      dockerfile: docker/kafka/topic_creator/Dockerfile
+    container_name: topic_creator
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9093
+    working_dir: /app/kafka
+    volumes:
+      - ./kafka/scripts:/app/kafka/scripts
+      - ./kafka/topics_config.json:/app/kafka/topics_config.json
+    command: python /app/kafka/scripts/create_topics.py
+    depends_on:
+      - kafka
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./script/bash/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+
+  sqlmesh:
+    build:
+      context: .
+      dockerfile: docker/sql_mesh/Dockerfile
+    container_name: sqlmesh
+    volumes:
+      - ./transformations:/transformations
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+    command: sqlmesh run --target postgres
+
+  superset:
+    build:
+      context: .
+      dockerfile: docker/superset/Dockerfile
+    container_name: superset
+    restart: always
+    depends_on:
+      - postgres
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB_SUPERSET=${POSTGRES_DB_SUPERSET}
+      - SUPERSET=${SUPERSET}
+      - SUPERSET_CONFIG_PATH=/etc/superset/superset_config.py
+    volumes:
+      - ./superset/superset_config.py:/etc/superset/superset_config.py
+    ports:
+      - "8088:8088"
+    command: >
+      /bin/sh -c "
+      superset db upgrade &&
+      superset fab create-admin --username admin --firstname Superset --lastname Admin --email admin@superset.com --password admin &&
+      superset init &&
+      superset run -p 8088 --host 0.0.0.0 --with-threads --reload --debugger"
+volumes:
+  postgres_data:
+
