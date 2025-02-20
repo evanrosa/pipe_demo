@@ -4,33 +4,52 @@ This repository demonstrates a **streaming and batch data pipeline** inspired by
 
 ## Overview
 
-1. **Streaming Ingestion (Kafka)**  
-   - Synthetic events (e.g., subscription sign-ups, churn, payments) are published to Kafka in real time.  
-   - Containers are orchestrated locally using Docker Compose (Kafka + Zookeeper).
+- **Purpose:**  
+  Originally developed to demonstrate my ability to build scalable data solutions for subscription-based businesses. It simulates real-world scenarios with synthetic data over multiple years and integrates advanced data processing techniques.
 
-2. **Cloud Data Storage (BigQuery Sandbox)**  
-   - Raw events are batched from Kafka and loaded into BigQuery’s free sandbox.  
-   - No local database required; the sandbox handles up to 10GB storage and 1TB of processing per month under the free tier.
+- **Key Technologies:**  
+  - **Kafka:** For real-time event ingestion across multiple topics (subscriptions, revenue, churn, customer engagement).  
+  - **BigQuery:** As the data warehouse, replacing Postgres, to showcase cloud-based data warehousing.  
+  - **SQLMesh:** For SQL transformations and data modeling.  
+  - **Preset:** For building interactive dashboards and visualizations.  
+  - **Python & Docker:** To orchestrate and containerize the entire stack.
 
-3. **Transformations (SQLMesh)**  
-   - Batch transformation scripts convert raw data into curated tables.  
-   - SQLMesh versioning ensures reproducibility across multiple transformations.
+## Architecture
 
-4. **Dashboards (Preset)**  
-   - Preset (or Superset) is used for visualization.  
-   - Connects directly to BigQuery for near real-time insights on subscription trends and underwriting status.
+1. **Data Ingestion:**  
+   - Kafka producer generates synthetic events (subscriptions, revenue, churn, engagement) with historical timestamps.  
+   - Topics are created via a Kafka admin script using a JSON config.
 
----
+2. **Data Processing:**  
+   - Kafka consumers read events from each topic concurrently (using Python threads) and write them to BigQuery.
+   - SQLMesh transforms raw data into analytics-ready tables.
 
-## Getting Started
+3. **Visualization:**  
+   - Preset connects to BigQuery for interactive dashboards.
 
-### 1. Clone the Repository
-```bash
-git clone repo
-cd root
-```
+## How to Run
 
-### 2. CMDs
+1. **Pre-requisites:**
+   - Docker & Docker Compose installed.
+   - A `.env` file with necessary credentials and configuration.
+   - Google Cloud service account key (mounted in the container) for BigQuery access.
+  
+2. **Spin Up the Stack:**
+   ```bash
+   docker-compose up --build
+
+3. **Access Dashboards with Preset**
+
+4. **Interacting with Pipeline**
+   - Synthetic events will be ingested automatically by the Kafka producer and processed by consumers.
+
+
+## Why This Project?
+
+Even though the original job posting is no longer available, this project remains a testament to my skills in building modern data architectures, handling streaming data, and creating effective data visualizations. It demonstrates a practical, hands-on approach to solving real business problems, and is a valuable portfolio piece to show to potential employers.
+
+
+### Other CMDs
 ```bash
 docker compose run --rm sqlmesh sqlmesh plan
 ```
