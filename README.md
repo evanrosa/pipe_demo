@@ -1,4 +1,4 @@
-# Pipe-Style Data Engineering Demo (BigQuery Sandbox Edition)
+# Pipe-Style Data Engineering Demo 
 
 This repository demonstrates a **streaming and batch data pipeline** inspired by Pipe’s mission of analyzing recurring revenue data for non-dilutive financing. Here, we use Google BigQuery’s sandbox (free tier) for data storage and SQLMesh for transformations—plus local Kafka for streaming events.
 
