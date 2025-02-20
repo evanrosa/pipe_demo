@@ -1,2 +1,3 @@
 sqlmesh[web]
 psycopg2-binary==2.9.10
+google-cloud-bigquery==3.29.0

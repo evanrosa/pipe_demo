@@ -1,10 +1,10 @@
 import os
 import json
-import psycopg2
-from kafka import KafkaConsumer
-from dotenv import load_dotenv
-from kafka.errors import NoBrokersAvailable
 import time
+from kafka import KafkaConsumer
+from kafka.errors import NoBrokersAvailable
+from google.cloud import bigquery
+from dotenv import load_dotenv
 
 load_dotenv()
 boot = os.getenv('KAFKA_BOOTSTRAP_SERVERS')
@@ -27,51 +27,46 @@ def create_consumer(bootstrap_servers, topic, retries=5):
     raise Exception("Kafka broker is not available after retries")
 
 
+def connect_to_bq():
+    # BigQuery client; credentials are picked up from GOOGLE_APPLICATION_CREDENTIALS env var
+    client = bigquery.Client(project=os.getenv("BIGQUERY_PROJECT"))
+    return client
 
-def connect_to_db():
-    host = os.environ.get('POSTGRES_HOST', 'postgres')
-    port = os.environ.get('POSTGRES_PORT', 5432)
-    user = os.environ.get('POSTGRES_USER', 'postgres')
-    password = os.environ.get('POSTGRES_PASSWORD', '<PASSWORD>')
-    db = os.environ.get('POSTGRES_DB', 'pipe_demo')
 
-    conn = psycopg2.connect(
-        host=host,
-        port=port,
-        user=user,
-        password=password,
-        dbname=db
-    )
-    conn.autocommit = True
-    return conn
+def ensure_table_exists(client):
+    project = os.getenv("BIGQUERY_PROJECT")
+    dataset_id = os.getenv("BIGQUERY_DATASET")
+    table_id = "raw_subscription_events"
+    table_ref = client.dataset(dataset_id).table(table_id)
+    try:
+        client.get_table(table_ref)
+        print("Table already exists.")
+    except Exception as e:
+        # Define schema matching your events
+        schema = [
+            bigquery.SchemaField("user_id", "STRING", mode="REQUIRED"),
+            bigquery.SchemaField("event_time", "TIMESTAMP", mode="REQUIRED"),
+            bigquery.SchemaField("subscription_amount", "NUMERIC", mode="REQUIRED"),
+            bigquery.SchemaField("event_type", "STRING", mode="REQUIRED"),
+        ]
+        table = bigquery.Table(table_ref, schema=schema)
+        table = client.create_table(table)
+        print(f"Created table {project}.{dataset_id}.{table_id}")
 
-def create_table_if_not_exists(conn):
-    create_table_query = """
-        CREATE TABLE IF NOT EXISTS raw_subscription_events (
-            id SERIAL PRIMARY KEY,
-            user_id VARCHAR(255) NOT NULL,
-            event_time TIMESTAMP NOT NULL,
-            subscription_amount DECIMAL(10, 2) NOT NULL,
-            event_type TEXT NOT NULL
-        );
-    """
-    with conn.cursor() as cursor:
-        cursor.execute(create_table_query)
-    print("Ensured raw_subscription_events table exists.")
 
-def insert_event(conn, event):
-    insert_query = """
-        INSERT INTO raw_subscription_events (user_id, event_time, subscription_amount, event_type)
-        VALUES (%s, %s, %s, %s);
-    """
-    with conn.cursor() as cursor:
-        cursor.execute(insert_query, (
-            event.get('user_id'),
-            event.get('event_time'),
-            event.get('subscription_amount'),
-            event.get('event_type')
-        ))
-    print(f"Event inserted: {event}")
+def insert_event(client, event):
+    project = os.getenv("BIGQUERY_PROJECT")
+    dataset_id = os.getenv("BIGQUERY_DATASET")
+    table_id = "raw_subscription_events"
+    table_ref = client.dataset(dataset_id).table(table_id)
+    # Insert the event as a single row
+    rows_to_insert = [event]
+    errors = client.insert_rows_json(table_ref, rows_to_insert)
+    if errors == []:
+        print(f"Event inserted: {event}")
+    else:
+        print("Encountered errors while inserting rows: {}".format(errors))
+
 
 def main():
     bootstrap_servers = os.environ.get('KAFKA_BOOTSTRAP_SERVERS', boot)
@@ -79,13 +74,14 @@ def main():
 
     consumer = create_consumer(bootstrap_servers, topic)
 
-    conn = connect_to_db()
-    create_table_if_not_exists(conn)
+    client = connect_to_bq()
+    ensure_table_exists(client)
 
     print("Starting to consume events...")
     for msg in consumer:
         event = msg.value
-        insert_event(conn, event)
+        insert_event(client, event)
+
 
 if __name__ == "__main__":
     main()
