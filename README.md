@@ -16,15 +16,11 @@ This repository demonstrates a **streaming and batch data pipeline** inspired by
    - Batch transformation scripts convert raw data into curated tables.  
    - SQLMesh versioning ensures reproducibility across multiple transformations.
 
-4. **Risk & Underwriting Logic (Chalk)**  
-   - Chalk can handle underwriting rules (e.g., monthly recurring revenue thresholds, churn risk).  
-   - Simple integration calls Chalk’s logic engine to produce a risk or eligibility score.
-
-5. **Forecasting Model (Baseten)**  
+4. **Forecasting Model (Baseten)**  
    - A small ML model (e.g., churn prediction) is deployed on Baseten.  
    - Any updated BigQuery data can trigger scoring requests via Baseten’s API.
 
-6. **Dashboards (Preset)**  
+5. **Dashboards (Preset)**  
    - Preset (or Superset) is used for visualization.  
    - Connects directly to BigQuery for near real-time insights on subscription trends and underwriting status.
 
