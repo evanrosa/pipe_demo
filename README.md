@@ -16,11 +16,7 @@ This repository demonstrates a **streaming and batch data pipeline** inspired by
    - Batch transformation scripts convert raw data into curated tables.  
    - SQLMesh versioning ensures reproducibility across multiple transformations.
 
-4. **Forecasting Model (Baseten)**  
-   - A small ML model (e.g., churn prediction) is deployed on Baseten.  
-   - Any updated BigQuery data can trigger scoring requests via Baseten’s API.
-
-5. **Dashboards (Preset)**  
+4. **Dashboards (Preset)**  
    - Preset (or Superset) is used for visualization.  
    - Connects directly to BigQuery for near real-time insights on subscription trends and underwriting status.
 
