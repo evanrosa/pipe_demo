@@ -9,7 +9,7 @@ This repository demonstrates a **streaming and batch data pipeline** inspired by
 
 - **Key Technologies:**  
   - **Kafka:** For real-time event ingestion across multiple topics (subscriptions, revenue, churn, customer engagement).  
-  - **BigQuery:** As the data warehouse, replacing Postgres, to showcase cloud-based data warehousing.  
+  - **BigQuery:** As the data warehouse to showcase cloud-based data warehousing.  
   - **SQLMesh:** For SQL transformations and data modeling.  
   - **Preset:** For building interactive dashboards and visualizations.  
   - **Python & Docker:** To orchestrate and containerize the entire stack.
