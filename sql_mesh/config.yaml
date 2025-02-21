@@ -1,22 +1,21 @@
 gateways:
-  postgres:
+  bigquery:
     connection:
       # For more information on configuring the connection to your execution engine, visit:
       # https://sqlmesh.readthedocs.io/en/stable/reference/configuration/#connections
       # https://sqlmesh.readthedocs.io/en/stable/integrations/engines/postgres/#connection-options
       type: bigquery
       project: {{env_var('BQ_ID')}}
-      # concurrent_tasks: 4
-      # register_comments: True
-      # pre_ping: True
-      # pretty_sql: False
-      # keepalives_idle: 
-      # connect_timeout: 10
-      # role: 
-      # sslmode: 
+      location: 'us-east4'
+    state_connection:
+      type: postgres
+      host: 'postgres'
+      port: 5432
+      user: {{env_var('POSTGRES_USER')}}
+      password: {{env_var('POSTGRES_PASSWORD')}}
+      database: {{env_var('POSTGRES_DB')}}
 
-
-default_gateway: postgres
+default_gateway: bigquery
 
 model_defaults:
   dialect: bigquery

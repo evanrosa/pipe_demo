@@ -1,0 +1,47 @@
+tests:
+  subscription_retention_test:
+    model: subscription_retention.sql
+    inputs:
+      raw_subscription_events:
+        rows:
+          - user_id: "user_1"
+            event_time: "2023-01-15T10:00:00"
+            subscription_amount: 50
+            event_type: "new_subscription"
+            subscription_plan: "basic"
+            region: "North America"
+          - user_id: "user_1"
+            event_time: "2023-01-20T10:00:00"
+            subscription_amount: 50
+            event_type: "renewal"
+            subscription_plan: "basic"
+            region: "North America"
+          - user_id: "user_2"
+            event_time: "2023-01-10T10:00:00"
+            subscription_amount: 70
+            event_type: "new_subscription"
+            subscription_plan: "pro"
+            region: "Europe"
+          - user_id: "user_2"
+            event_time: "2023-01-25T10:00:00"
+            subscription_amount: 70
+            event_type: "cancellation"
+            subscription_plan: "pro"
+            region: "Europe"
+    outputs:
+      query:
+        rows:
+          - subscription_plan: "basic"
+            region: "North America"
+            month: "2023-01-01"  # DATE_TRUNC of any January 2023 date will result in 2023-01-01
+            total_events: 2
+            new_subscriptions: 1
+            renewals: 1
+            cancellations: 0
+          - subscription_plan: "pro"
+            region: "Europe"
+            month: "2023-01-01"
+            total_events: 2
+            new_subscriptions: 1
+            renewals: 0
+            cancellations: 1
