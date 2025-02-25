@@ -1,6 +1,6 @@
 # Pipe-Style Data Engineering Demo 
 
-This repository demonstrates a **streaming and batch data pipeline** inspired by Pipe’s mission of analyzing recurring revenue data for non-dilutive financing. Here, we use Google BigQuery’s sandbox (free tier) for data storage and SQLMesh for transformations—plus local Kafka for streaming events.
+This repository demonstrates a **streaming and batch data pipeline** inspired by Pipe’s mission of analyzing recurring revenue data for financing. Here, I use Google BigQuery’s sandbox (free tier) for data storage and SQLMesh for transformations—plus local Kafka for streaming events.
 
 ## Overview
 
@@ -11,7 +11,7 @@ This repository demonstrates a **streaming and batch data pipeline** inspired by
   - **Kafka:** For real-time event ingestion across multiple topics (subscriptions, revenue, churn, customer engagement).  
   - **BigQuery:** As the data warehouse to showcase cloud-based data warehousing.  
   - **SQLMesh:** For SQL transformations and data modeling.  
-  - **Preset:** For building interactive dashboards and visualizations.  
+  - **Preset(Superset):** For building interactive dashboards and visualizations.  
   - **Python & Docker:** To orchestrate and containerize the entire stack.
 
 ## Architecture
@@ -49,7 +49,9 @@ This repository demonstrates a **streaming and batch data pipeline** inspired by
 Even though the original job posting is no longer available, this project remains a testament to my skills in building modern data architectures, handling streaming data, and creating effective data visualizations. It demonstrates a practical, hands-on approach to solving real business problems, and is a valuable portfolio piece to show to potential employers.
 
 
-### Other CMDs
+### CMDs Noted:
 ```bash
-docker compose run --rm sqlmesh sqlmesh plan / ui / info
+docker compose up -d up
+docker compose run --rm sqlmesh sqlmesh plan / ui / info / run
+docker compose run --rm sqlmesh sqlmesh plan --restate-model db.table_name -s YYYY-MM-DD -e YYYY-MM-DD 
 ```
