@@ -1,0 +1,108 @@
+customer_insight_summary:
+  model: db.customer_insight_summary
+  inputs:
+    raw_subscription_events:
+      rows:
+      - subscription_id: "sub-001"
+        user_id: "user-123"
+        event_time: "2024-01-15T00:00:00"
+        subscription_amount: 2000.0
+        event_type: "new_subscription"
+        subscription_plan: "pro"
+        region: "North America"
+        user_segment: "SMB"
+        contract_length_months: 12
+        capital_eligibility: true
+        growth_rate: 0.50
+        annualized_revenue: 24000.0
+        billing_connection_status: true
+        customer_growth_rate: 0.10
+        bank_connection_quality: 85
+    raw_revenue_events:
+      rows:
+      - revenue_id: "rev-001"
+        user_id: "user-123"
+        event_time: "2024-01-20T00:00:00"
+        payment_amount: 5000.0
+        payment_method: "credit_card"
+        discount_applied: 0.0
+        currency: "USD"
+        invoice_id: "inv-001"
+        recurring_period: "monthly"
+        due_date: "2024-02-20T00:00:00"
+        capital_utilization: false
+        revenue_stability_score: 90
+        advance_amount: 10000.0
+        repayment_percentage: 10.0
+        repayment_status: "on_track"
+        revenue_trend: "stable"
+        revenue_volatility: 0.20
+        capital_offer_accepted: true
+        payment_delinquency: "no_delinquency"
+    raw_churn_events:
+      rows:
+      - churn_event_id: "churn-001"
+        user_id: "user-123"
+        event_time: "2024-01-25T00:00:00"
+        churn_risk: 0.30
+        customer_tenure_days: 200
+        last_activity_gap_days: 10
+        support_ticket_count: 1
+        usage_drop_percentage: 10.0
+        satisfaction_score: 8
+        recent_capital_offer: false
+        cancellation_reason: null
+        capital_withdrawal_flag: null
+    raw_customer_engagement_events:
+      rows:
+      - engagement_id: "eng-001"
+        user_id: "user-123"
+        event_time: "2024-01-18T00:00:00"
+        engagement_score: 75
+        session_duration: 30.0
+        login_count: 3
+        dashboard_views: 5
+        financing_inquiries: 1
+        feature_interaction_count: 2
+        api_request_count: 10
+        referral_count: 1
+        capital_access_count: 0
+        report_download_count: 2
+        integration_usage: 3
+        financing_conversion_rate: 0.20
+        platform_dependency_score: 70
+        connected_account_status: true
+        revenue_insights_views: 4
+  outputs:
+    query:
+      rows:
+      - user_id: "user-123"
+        year: 2024
+        month: 1
+        subscription_plan: "pro"
+        region: "North America"
+        user_segment: "SMB"
+        avg_growth_rate: 0.50
+        total_annualized_revenue: 24000.0
+        avg_customer_growth_rate: 0.10
+        total_payment_amount: 5000.0
+        avg_revenue_stability_score: 90
+        total_advance_amount: 10000.0
+        repayment_status: "on_track"
+        revenue_trend: "stable"
+        avg_revenue_volatility: 0.20
+        payment_delinquency: "no_delinquency"
+        avg_churn_risk: 0.30
+        avg_customer_tenure: 200
+        avg_last_activity_gap: 10
+        total_support_ticket_count: 1
+        avg_usage_drop_percentage: 10.0
+        avg_satisfaction_score: 8
+        cancellation_reason: null
+        capital_withdrawal_flag: null
+        avg_engagement_score: 75
+        avg_session_duration: 30.0
+        total_login_count: 3
+        total_financing_inquiries: 1
+        total_feature_interaction_count: 2
+        total_capital_access_count: 0

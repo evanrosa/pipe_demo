@@ -51,5 +51,5 @@ Even though the original job posting is no longer available, this project remain
 
 ### Other CMDs
 ```bash
-docker compose run --rm sqlmesh sqlmesh plan
+docker compose run --rm sqlmesh sqlmesh plan / ui / info
 ```

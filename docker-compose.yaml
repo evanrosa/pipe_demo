@@ -53,6 +53,26 @@ services:
       - kafka
       - postgres
 
+  bigquery_init:
+    build:
+      context: .
+      dockerfile: docker/kafka/producer/Dockerfile
+    container_name: bigquery_init
+    env_file:
+      - .env
+    environment:
+      - BIGQUERY_PROJECT=${BQ_ID}
+      - BIGQUERY_DATASET=${BIGQUERY_DATASET}
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/creds/pipe_demo_bq.json
+    volumes:
+      - ./creds/pipe_demo_bq.json:/app/creds/pipe_demo_bq.json
+      - ./kafka/scripts/create_tables.py:/app/kafka/scripts/create_tables.py
+    command: python /app/kafka/scripts/create_tables.py
+    # This container will run once and then exit.
+    depends_on:
+      - kafka
+
+
   topic_creator:
     build:
       context: .
@@ -96,7 +116,6 @@ services:
       - GOOGLE_APPLICATION_CREDENTIALS=/app/pipe_demo_bq.json
     depends_on:
       - postgres
-    # command: sqlmesh -p /app run --target postgres
     ports:
       - "8000:8000"
 

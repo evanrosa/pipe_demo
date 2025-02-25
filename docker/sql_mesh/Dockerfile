@@ -12,5 +12,6 @@ COPY . /app
 EXPOSE 8000
 
 # Default command runs the web app
-CMD ["sqlmesh", "web", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sqlmesh", "ui", "--host", "0.0.0.0", "--port", "8000"]
+
 
