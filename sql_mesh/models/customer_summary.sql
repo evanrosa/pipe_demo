@@ -86,6 +86,7 @@ agg_engage AS (
 SELECT
   cal.user_id,
   cal.year,
+  cal.month,
   cal.month_year,
   COALESCE(sub.subscription_plan, 'N/A') AS subscription_plan,
   COALESCE(sub.region, 'N/A') AS region,
@@ -123,4 +124,4 @@ LEFT JOIN agg_churn ch
   ON cal.user_id = ch.user_id AND cal.month = ch.month AND cal.year = ch.year
 LEFT JOIN agg_engage eng
   ON cal.user_id = eng.user_id AND cal.month = eng.month AND cal.year = eng.year
-ORDER BY cal.user_id, cal.year, cal.month_year;
+ORDER BY cal.user_id, cal.year, cal.month, cal.month_year;

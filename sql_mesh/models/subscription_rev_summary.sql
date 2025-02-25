@@ -48,6 +48,7 @@ select
   coalesce(s.user_id, r.user_id) as user_id,
   timestamp_trunc(coalesce(r.event_time, s.event_time), DAY) AS event_date,
   s.year,
+  s.month,
   FORMAT_DATETIME('%Y-%m', coalesce(r.event_time, s.event_time)) as month_year,
   any_value(s.subscription_plan) as subscription_plan,
   any_value(s.region) as region,
@@ -70,5 +71,6 @@ from
 group by
   user_id,
   event_date,
+  s.month,
   month_year,
   year
