@@ -27,6 +27,10 @@ This repository demonstrates a **streaming and batch data pipeline** inspired by
 3. **Visualization:**  
    - Preset connects to BigQuery for interactive dashboards.
 
+
+## Preset (Superset) Dashboard
+![Dashboard for Pipe Demo Project](images/pipe.png "Pipe Demo Dashboard")
+
 ## How to Run
 
 1. **Pre-requisites:**
