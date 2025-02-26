@@ -50,7 +50,7 @@ This repository demonstrates a **streaming and batch data pipeline** inspired by
 
 ## Why This Project?
 
-Even though the original job posting is no longer available, this project remains a testament to my skills in building modern data architectures, handling streaming data, and creating effective data visualizations. It demonstrates a practical, hands-on approach to solving real business problems, and is a valuable portfolio piece to show to potential employers.
+I was inspired by [Pipe.com](https://pipe.com/) and this project is a testament to my skills in building modern data architectures, handling streaming data, and creating effective data visualizations. It demonstrates a practical, hands-on approach to solving real business problems, and is a valuable portfolio piece to show to potential employers.
 
 
 ### CMDs Noted:
