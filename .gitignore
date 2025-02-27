@@ -162,4 +162,4 @@ cython_debug/
 
 .csv
 creds/
-!/sql_mesh/pipe_demo_bq.json
+/sql_mesh/pipe_demo_bq.json
